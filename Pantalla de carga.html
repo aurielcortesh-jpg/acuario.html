@@ -3,56 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <title>Acuario PWA</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- PANTALLA 1: ID -->
-  <div id="screen-id" class="screen active">
-    <div class="card">
+<div id="app">
+
+  <!-- PANTALLA ID -->
+  <section id="screen-id" class="screen active">
+    <div class="card fade-in">
       <div class="icon-slot"></div>
-      <h2>ID del Acuario</h2>
-
-      <input
-        id="aquariumId"
-        type="text"
-        maxlength="6"
-        placeholder="Ejemplo: 4G5HTD"
-      >
-
+      <h1>ID del Acuario</h1>
+      <input id="aquariumId" maxlength="6" placeholder="4G5HTD">
       <button id="connectBtn">Conectar</button>
       <p id="idError" class="error"></p>
     </div>
-  </div>
+  </section>
 
-  <!-- PANTALLA 2: CONECTANDO -->
-  <div id="screen-connecting" class="screen">
+  <!-- PANTALLA CARGA -->
+  <section id="screen-loading" class="screen">
     <div class="card">
-      <div class="icon-slot"></div>
-      <h2>Conectando</h2>
-
-      <div class="loader"></div>
+      <div class="spinner"></div>
       <p id="loadingText"></p>
     </div>
-  </div>
+  </section>
 
-  <!-- PANTALLA 3: FALLO -->
-  <div id="screen-fail" class="screen">
-    <div class="card">
-      <div class="icon-slot"></div>
+  <!-- PANTALLA ERROR -->
+  <section id="screen-error" class="screen">
+    <div class="card shake">
       <h2>No se encontró el dispositivo</h2>
-      <button id="retryBtn">Intentar de nuevo</button>
+      <button id="retryBtn">Reintentar</button>
     </div>
-  </div>
+  </section>
 
-  <!-- PANTALLA 4: MENÚ -->
-  <div id="screen-menu" class="screen">
-    <h2>Panel del Acuario</h2>
+  <!-- MENÚ -->
+  <section id="screen-menu" class="screen">
+    <header>Panel del Acuario</header>
 
     <div class="grid">
-
       <div class="card">
         <div class="icon-slot"></div>
         <h3>Temperatura</h3>
@@ -66,7 +55,6 @@
       </div>
 
       <div class="card">
-        <div class="icon-slot"></div>
         <h3>Alimentación</h3>
         <button>Pequeña</button>
         <button>Mediana</button>
@@ -74,16 +62,16 @@
       </div>
 
       <div class="card">
-        <div class="icon-slot"></div>
         <h3>Luces</h3>
         <button>Blanco</button>
         <button>Celeste</button>
         <button>Azul suave</button>
       </div>
-
     </div>
-  </div>
+  </section>
 
-  <script src="app.js"></script>
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>
