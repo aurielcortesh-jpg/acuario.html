@@ -1,72 +1,12 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Acuario Control</title>
+<!-- Conectando -->
+<div id="connecting" class="screen">
+  <h2>Conectando al acuario</h2>
 
-  <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-  <!-- Loader -->
-  <div id="loader" class="screen active">
-    <div class="fade-in">
-      <div class="spinner"></div>
-      <p id="loader-text"></p>
-    </div>
+  <div class="progress-container">
+    <div id="progress-bar"></div>
   </div>
 
-  <!-- Login -->
-  <div id="login" class="screen">
-    <h1>Control de Acuario</h1>
+  <p id="connect-status"></p>
+</div>
 
-    <input
-      type="text"
-      id="aquariumId"
-      placeholder="ID del acuario"
-      maxlength="6"
-      autocomplete="off"
-    >
-
-    <button id="connectBtn">Conectar</button>
-
-    <p id="errorMsg"></p>
-  </div>
-
-  <!-- Menú -->
-  <div id="menu" class="screen">
-    <h2>Menú del Acuario</h2>
-
-    <section>
-      <h3>Alimentación</h3>
-      <button data-feed="small">Porción pequeña</button>
-      <button data-feed="medium">Porción mediana</button>
-      <button data-feed="large">Porción grande</button>
-    </section>
-
-    <section>
-      <h3>Iluminación</h3>
-      <div class="color-buttons">
-        <button style="background:#e6f7ff"></button>
-        <button style="background:#ffffff"></button>
-        <button style="background:#cce6ff"></button>
-      </div>
-    </section>
-
-    <section>
-      <h3>Temperatura (simulada)</h3>
-      <p id="tempValue">26.0 °C</p>
-    </section>
-
-    <section>
-      <h3>pH (simulado)</h3>
-      <p id="phValue">7.2</p>
-    </section>
-  </div>
-
-  <script src="app.js"></script>
-</body>
-</html>
 
