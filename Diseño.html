@@ -1,253 +1,72 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Acuario</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acuario Control</title>
 
-<style>
-:root {
-  --bg: #020617;
-  --card: #1e293b;
-  --accent: #38bdf8;
-  --text: #e5e7eb;
-  --danger: #ef4444;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: system-ui, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  height: 100vh;
-  overflow: hidden;
-}
-
-/* Fondo animado */
-.background {
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(circle at top, #1e3a8a, #020617);
-  animation: fadeIn 1.5s ease forwards;
-  opacity: 0;
-}
-
-@keyframes fadeIn {
-  to { opacity: 1; }
-}
-
-/* Contenedor */
-.app {
-  position: relative;
-  z-index: 2;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Tarjetas */
-.card {
-  background: var(--card);
-  border-radius: 18px;
-  padding: 24px;
-  width: 90%;
-  max-width: 420px;
-  box-shadow: 0 20px 40px rgba(0,0,0,.4);
-  animation: slideUp .6s ease;
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.hidden {
-  display: none;
-}
-
-h2 {
-  margin-top: 0;
-  text-align: center;
-}
-
-input, button {
-  width: 100%;
-  padding: 14px;
-  margin-top: 12px;
-  border-radius: 12px;
-  border: none;
-  font-size: 16px;
-}
-
-input {
-  text-transform: uppercase;
-}
-
-button {
-  background: var(--accent);
-  color: #020617;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-button.secondary {
-  background: #334155;
-  color: var(--text);
-}
-
-.error {
-  margin-top: 12px;
-  color: var(--danger);
-  text-align: center;
-}
-
-/* Menú */
-.section {
-  margin-top: 20px;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-
-.color-btn {
-  height: 44px;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-}
-
-.status {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 8px;
-  font-size: 15px;
-}
-</style>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-<div class="background"></div>
 
-<div class="app">
-
-  <!-- PANTALLA 1: LOGIN -->
-  <div class="card" id="loginCard">
-    <h2>Ingrese el ID del acuario</h2>
-    <input id="aquariumId" maxlength="6" placeholder="Ejemplo: 4G5HTD">
-    <button onclick="connect()">Conectar</button>
-    <div class="error hidden" id="errorMsg">
-      No se encontró el dispositivo
+  <!-- Loader -->
+  <div id="loader" class="screen active">
+    <div class="fade-in">
+      <div class="spinner"></div>
+      <p id="loader-text"></p>
     </div>
   </div>
 
-  <!-- PANTALLA 2: MENÚ -->
-  <div class="card hidden" id="menuCard">
-    <h2>Panel del Acuario</h2>
+  <!-- Login -->
+  <div id="login" class="screen">
+    <h1>Control de Acuario</h1>
 
-    <div class="section">
-      <strong>Alimentación</strong>
-      <div class="grid">
-        <button onclick="feed('small')">Pequeña</button>
-        <button onclick="feed('medium')">Mediana</button>
-        <button onclick="feed('large')">Grande</button>
-      </div>
-    </div>
+    <input
+      type="text"
+      id="aquariumId"
+      placeholder="ID del acuario"
+      maxlength="6"
+      autocomplete="off"
+    >
 
-    <div class="section">
-      <strong>Iluminación</strong>
-      <div class="grid">
-        <button class="color-btn" style="background:#bae6fd" onclick="setLight('day')"></button>
-        <button class="color-btn" style="background:#f8fafc" onclick="setLight('white')"></button>
-        <button class="color-btn" style="background:#7dd3fc" onclick="setLight('sky')"></button>
-      </div>
-    </div>
+    <button id="connectBtn">Conectar</button>
 
-    <div class="section">
-      <strong>Estado del agua</strong>
-      <div class="status">
-        <span>Temperatura</span>
-        <span id="tempValue">-- °C</span>
-      </div>
-      <div class="status">
-        <span>pH</span>
-        <span id="phValue">--</span>
-      </div>
-    </div>
-
-    <button class="secondary" onclick="disconnect()">Desconectar</button>
+    <p id="errorMsg"></p>
   </div>
 
-</div>
+  <!-- Menú -->
+  <div id="menu" class="screen">
+    <h2>Menú del Acuario</h2>
 
-<script>
-/* Simulación */
-function random(min, max, decimals = 1) {
-  const value = Math.random() * (max - min) + min;
-  return value.toFixed(decimals);
-}
+    <section>
+      <h3>Alimentación</h3>
+      <button data-feed="small">Porción pequeña</button>
+      <button data-feed="medium">Porción mediana</button>
+      <button data-feed="large">Porción grande</button>
+    </section>
 
-/* LOGIN */
-function connect() {
-  const id = document.getElementById("aquariumId").value.trim().toUpperCase();
-  const error = document.getElementById("errorMsg");
+    <section>
+      <h3>Iluminación</h3>
+      <div class="color-buttons">
+        <button style="background:#e6f7ff"></button>
+        <button style="background:#ffffff"></button>
+        <button style="background:#cce6ff"></button>
+      </div>
+    </section>
 
-  if (!/^[A-Z0-9]{6}$/.test(id)) {
-    error.textContent = "ID inválido";
-    error.classList.remove("hidden");
-    return;
-  }
+    <section>
+      <h3>Temperatura (simulada)</h3>
+      <p id="tempValue">26.0 °C</p>
+    </section>
 
-  // Simulación de búsqueda de ESP32
-  if (id === "4G5HTD") {
-    localStorage.setItem("aquariumId", id);
-    showMenu();
-  } else {
-    error.textContent = "No se encontró el dispositivo";
-    error.classList.remove("hidden");
-  }
-}
+    <section>
+      <h3>pH (simulado)</h3>
+      <p id="phValue">7.2</p>
+    </section>
+  </div>
 
-function showMenu() {
-  document.getElementById("loginCard").classList.add("hidden");
-  document.getElementById("menuCard").classList.remove("hidden");
-}
-
-/* Persistencia */
-if (localStorage.getItem("aquariumId")) {
-  showMenu();
-}
-
-/* Acciones */
-function feed(size) {
-  console.log("Alimentar:", size);
-}
-
-function setLight(mode) {
-  console.log("Luz:", mode);
-}
-
-function disconnect() {
-  localStorage.removeItem("aquariumId");
-  location.reload();
-}
-
-/* Datos simulados guppy */
-setInterval(() => {
-  document.getElementById("tempValue").textContent =
-    random(24.0, 27.0) + " °C";
-
-  document.getElementById("phValue").textContent =
-    random(6.8, 7.4, 2);
-}, 2000);
-</script>
-
+  <script src="app.js"></script>
 </body>
 </html>
+
