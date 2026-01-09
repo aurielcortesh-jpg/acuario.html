@@ -1,13 +1,14 @@
 const screens = {
-  loader: document.getElementById("loader"),
-  login: document.getElementById("login"),
-  connecting: document.getElementById("connecting"),
-  menu: document.getElementById("menu")
+  id: document.getElementById("screen-id"),
+  connecting: document.getElementById("screen-connecting"),
+  fail: document.getElementById("screen-fail"),
+  menu: document.getElementById("screen-menu")
 };
 
-const loaderText = document.getElementById("loader-text");
-const connectStatus = document.getElementById("connect-status");
-const progressBar = document.getElementById("progress-bar");
+function show(screen) {
+  Object.values(screens).forEach(s => s.classList.remove("active"));
+  screens[screen].classList.add("active");
+}
 
 const phrases = [
   "Un momento, el ph perfecto toma tiempo",
@@ -18,36 +19,9 @@ const phrases = [
   "Espere un momento"
 ];
 
-const connectSteps = [
-  "Buscando dispositivo en la red",
-  "Dispositivo encontrado",
-  "Intercambiando credenciales",
-  "Sincronizando sensores",
-  "Conexión establecida"
-];
-
-// ---------- UTIL ----------
-function show(screen) {
-  Object.values(screens).forEach(s => s.classList.remove("active"));
-  screens[screen].classList.add("active");
-}
-
-// ---------- LOADER ----------
-loaderText.textContent = phrases[Math.floor(Math.random() * phrases.length)];
-
-setTimeout(() => {
-  const savedId = localStorage.getItem("aquariumId");
-  if (savedId) {
-    show("menu");
-  } else {
-    show("login");
-  }
-}, 4000);
-
-// ---------- CONEXIÓN ----------
-document.getElementById("connectBtn").addEventListener("click", () => {
+document.getElementById("connectBtn").onclick = () => {
   const id = document.getElementById("aquariumId").value.trim().toUpperCase();
-  const error = document.getElementById("errorMsg");
+  const error = document.getElementById("idError");
 
   error.textContent = "";
 
@@ -58,48 +32,35 @@ document.getElementById("connectBtn").addEventListener("click", () => {
 
   show("connecting");
   simulateConnection(id);
-});
+};
+
+document.getElementById("retryBtn").onclick = () => {
+  show("id");
+};
 
 function simulateConnection(id) {
-  let step = 0;
-  let progress = 0;
+  const text = document.getElementById("loadingText");
+  text.textContent = phrases[Math.floor(Math.random() * phrases.length)];
 
-  progressBar.style.width = "0%";
-
-  const interval = setInterval(() => {
-    connectStatus.textContent = connectSteps[step];
-    progress += 20;
-    progressBar.style.width = progress + "%";
-
-    step++;
-
-    if (step === connectSteps.length) {
-      clearInterval(interval);
-
-      setTimeout(() => {
-        if (id === "4G5HTD") {
-          localStorage.setItem("aquariumId", id);
-          show("menu");
-        } else {
-          show("login");
-          document.getElementById("errorMsg").textContent =
-            "No se encontró el dispositivo";
-        }
-      }, 600);
+  setTimeout(() => {
+    if (id === "4G5HTD") {
+      show("menu");
+    } else {
+      show("fail");
     }
-  }, 700);
+  }, 4000);
 }
 
-// ---------- SIMULACIONES ----------
+/* Simulación de sensores */
 setInterval(() => {
   const temp = (25 + Math.random() * 2 - 1).toFixed(1);
   const ph = (7 + Math.random() * 0.4 - 0.2).toFixed(2);
 
-  const tempEl = document.getElementById("tempValue");
-  const phEl = document.getElementById("phValue");
+  const t = document.getElementById("tempValue");
+  const p = document.getElementById("phValue");
 
-  if (tempEl && phEl) {
-    tempEl.textContent = temp + " °C";
-    phEl.textContent = ph;
+  if (t && p) {
+    t.textContent = temp + " °C";
+    p.textContent = ph;
   }
 }, 3000);
