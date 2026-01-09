@@ -1,106 +1,80 @@
-const screens = {
-  loader: document.getElementById("loader"),
-  login: document.getElementById("login"),
-  connecting: document.getElementById("connecting"),
-  menu: document.getElementById("menu")
-};
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Acuario PWA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-const loaderText = document.getElementById("loader-text");
-const connectStatus = document.getElementById("connect-status");
-const progressBar = document.getElementById("progress-bar");
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-const phrases = [
-  "Un momento, el ph perfecto toma tiempo",
-  "Contando burbujas y pidiendo a los peces no morder los sensores",
-  "Calibrando las mareas",
-  "Tu mundo acuático casi está listo",
-  "Traduciendo acento de Veracruz",
-  "Espere un momento"
-];
+  <!-- PANTALLA DE CARGA -->
+  <div id="loader" class="screen active">
+    <div class="fade-in">
+      <h2 id="loader-text"></h2>
+    </div>
+  </div>
 
-const connectSteps = [
-  "Buscando dispositivo en la red",
-  "Dispositivo encontrado",
-  "Intercambiando credenciales",
-  "Sincronizando sensores",
-  "Conexión establecida"
-];
+  <!-- LOGIN -->
+  <div id="login" class="screen">
+    <h2>ID del Acuario</h2>
 
-// ---------- UTIL ----------
-function show(screen) {
-  Object.values(screens).forEach(s => s.classList.remove("active"));
-  screens[screen].classList.add("active");
-}
+    <input
+      id="aquariumId"
+      type="text"
+      maxlength="6"
+      placeholder="Ejemplo: 4G5HTD"
+      style="text-transform: uppercase"
+    >
 
-// ---------- LOADER ----------
-loaderText.textContent = phrases[Math.floor(Math.random() * phrases.length)];
+    <button id="connectBtn">Conectar</button>
 
-setTimeout(() => {
-  const savedId = localStorage.getItem("aquariumId");
-  if (savedId) {
-    show("menu");
-  } else {
-    show("login");
-  }
-}, 4000);
+    <p id="errorMsg" class="error"></p>
+  </div>
 
-// ---------- CONEXIÓN ----------
-document.getElementById("connectBtn").addEventListener("click", () => {
-  const id = document.getElementById("aquariumId").value.trim().toUpperCase();
-  const error = document.getElementById("errorMsg");
+  <!-- CONECTANDO -->
+  <div id="connecting" class="screen">
+    <h2>Conectando...</h2>
 
-  error.textContent = "";
+    <div class="progress-container">
+      <div id="progress-bar"></div>
+    </div>
 
-  if (!/^[A-Z0-9]{6}$/.test(id)) {
-    error.textContent = "ID inválido";
-    return;
-  }
+    <p id="connect-status"></p>
+  </div>
 
-  show("connecting");
-  simulateConnection(id);
-});
+  <!-- MENÚ -->
+  <div id="menu" class="screen">
+    <h2>Panel del Acuario</h2>
 
-function simulateConnection(id) {
-  let step = 0;
-  let progress = 0;
+    <div class="card">
+      <h3>Temperatura</h3>
+      <p id="tempValue">-- °C</p>
+    </div>
 
-  progressBar.style.width = "0%";
+    <div class="card">
+      <h3>pH</h3>
+      <p id="phValue">--</p>
+    </div>
 
-  const interval = setInterval(() => {
-    connectStatus.textContent = connectSteps[step];
-    progress += 20;
-    progressBar.style.width = progress + "%";
+    <div class="card">
+      <h3>Alimentación</h3>
+      <button>Porción pequeña</button>
+      <button>Porción mediana</button>
+      <button>Porción grande</button>
+    </div>
 
-    step++;
+    <div class="card">
+      <h3>Luces</h3>
+      <button>Blanco</button>
+      <button>Celeste</button>
+      <button>Azul suave</button>
+    </div>
+  </div>
 
-    if (step === connectSteps.length) {
-      clearInterval(interval);
-
-      setTimeout(() => {
-        if (id === "4G5HTD") {
-          localStorage.setItem("aquariumId", id);
-          show("menu");
-        } else {
-          show("login");
-          document.getElementById("errorMsg").textContent =
-            "No se encontró el dispositivo";
-        }
-      }, 600);
-    }
-  }, 700);
-}
-
-// ---------- SIMULACIONES ----------
-setInterval(() => {
-  const temp = (25 + Math.random() * 2 - 1).toFixed(1);
-  const ph = (7 + Math.random() * 0.4 - 0.2).toFixed(2);
-
-  const tempEl = document.getElementById("tempValue");
-  const phEl = document.getElementById("phValue");
-
-  if (tempEl && phEl) {
-    tempEl.textContent = temp + " °C";
-    phEl.textContent = ph;
-  }
-}, 3000);
+  <script src="app.js"></script>
+</body>
+</html>
 
