@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acuario IoT</title>
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#020617">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui;
+      background: linear-gradient(180deg, #020617, #020617);
+      color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 24px;
+      border-radius: 18px;
+      width: 90%;
+      max-width: 420px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.4);
+      animation: appear .6s ease;
+      text-align: center;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 12px;
+      font-size: 16px;
+      border-radius: 12px;
+      border: none;
+    }
+
+    button {
+      background: #38bdf8;
+      color: #020617;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .hidden { display: none; }
+
+    @keyframes appear {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="card" id="login">
+  <h2>🐠 Acuario IoT</h2>
+  <p>Ingrese el código de su acuario</p>
+  <input id="code" placeholder="Ej: Edwjqogine">
+  <button onclick="login()">Conectar</button>
+</div>
+
+<div class="card hidden" id="panel">
+  <h2>Panel conectado</h2>
+
+  <button onclick="send('/feed')">🍽️ Alimentar</button>
+  <button onclick="send('/up')">⬆️ Subir temperatura</button>
+  <button onclick="send('/down')">⬇️ Bajar temperatura</button>
+
+  <p style="margin-top:16px">🎨 Iluminación</p>
+  <input type="color" onchange="setColor(this.value)">
+</div>
+
+<script>
+const ESP_IP = "http://192.168.1.50"; // CAMBIA ESTA IP
+
+function login() {
+  const code = document.getElementById("code").value;
+  fetch(`${ESP_IP}/auth?token=${code}`)
+    .then(r => r.ok ? connect() : alert("Código incorrecto"));
+}
+
+function connect() {
+  document.getElementById("login").classList.add("hidden");
+  document.getElementById("panel").classList.remove("hidden");
+}
+
+function send(cmd) {
+  fetch(ESP_IP + cmd);
+}
+
+function setColor(hex) {
+  fetch(`${ESP_IP}/color?hex=${hex.substring(1)}`);
+}
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js");
+}
+</script>
+
+</body>
+</html>
