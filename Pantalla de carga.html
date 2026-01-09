@@ -5,76 +5,85 @@
   <title>Acuario PWA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- PANTALLA DE CARGA -->
-  <div id="loader" class="screen active">
-    <div class="fade-in">
-      <h2 id="loader-text"></h2>
+  <!-- PANTALLA 1: ID -->
+  <div id="screen-id" class="screen active">
+    <div class="card">
+      <div class="icon-slot"></div>
+      <h2>ID del Acuario</h2>
+
+      <input
+        id="aquariumId"
+        type="text"
+        maxlength="6"
+        placeholder="Ejemplo: 4G5HTD"
+      >
+
+      <button id="connectBtn">Conectar</button>
+      <p id="idError" class="error"></p>
     </div>
   </div>
 
-  <!-- LOGIN -->
-  <div id="login" class="screen">
-    <h2>ID del Acuario</h2>
+  <!-- PANTALLA 2: CONECTANDO -->
+  <div id="screen-connecting" class="screen">
+    <div class="card">
+      <div class="icon-slot"></div>
+      <h2>Conectando</h2>
 
-    <input
-      id="aquariumId"
-      type="text"
-      maxlength="6"
-      placeholder="Ejemplo: 4G5HTD"
-      style="text-transform: uppercase"
-    >
-
-    <button id="connectBtn">Conectar</button>
-
-    <p id="errorMsg" class="error"></p>
-  </div>
-
-  <!-- CONECTANDO -->
-  <div id="connecting" class="screen">
-    <h2>Conectando...</h2>
-
-    <div class="progress-container">
-      <div id="progress-bar"></div>
+      <div class="loader"></div>
+      <p id="loadingText"></p>
     </div>
-
-    <p id="connect-status"></p>
   </div>
 
-  <!-- MENÚ -->
-  <div id="menu" class="screen">
+  <!-- PANTALLA 3: FALLO -->
+  <div id="screen-fail" class="screen">
+    <div class="card">
+      <div class="icon-slot"></div>
+      <h2>No se encontró el dispositivo</h2>
+      <button id="retryBtn">Intentar de nuevo</button>
+    </div>
+  </div>
+
+  <!-- PANTALLA 4: MENÚ -->
+  <div id="screen-menu" class="screen">
     <h2>Panel del Acuario</h2>
 
-    <div class="card">
-      <h3>Temperatura</h3>
-      <p id="tempValue">-- °C</p>
-    </div>
+    <div class="grid">
 
-    <div class="card">
-      <h3>pH</h3>
-      <p id="phValue">--</p>
-    </div>
+      <div class="card">
+        <div class="icon-slot"></div>
+        <h3>Temperatura</h3>
+        <p id="tempValue">-- °C</p>
+      </div>
 
-    <div class="card">
-      <h3>Alimentación</h3>
-      <button>Porción pequeña</button>
-      <button>Porción mediana</button>
-      <button>Porción grande</button>
-    </div>
+      <div class="card">
+        <div class="icon-slot"></div>
+        <h3>pH</h3>
+        <p id="phValue">--</p>
+      </div>
 
-    <div class="card">
-      <h3>Luces</h3>
-      <button>Blanco</button>
-      <button>Celeste</button>
-      <button>Azul suave</button>
+      <div class="card">
+        <div class="icon-slot"></div>
+        <h3>Alimentación</h3>
+        <button>Pequeña</button>
+        <button>Mediana</button>
+        <button>Grande</button>
+      </div>
+
+      <div class="card">
+        <div class="icon-slot"></div>
+        <h3>Luces</h3>
+        <button>Blanco</button>
+        <button>Celeste</button>
+        <button>Azul suave</button>
+      </div>
+
     </div>
   </div>
 
   <script src="app.js"></script>
 </body>
 </html>
-
