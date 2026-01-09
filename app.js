@@ -1,0 +1,105 @@
+const screens = {
+  loader: document.getElementById("loader"),
+  login: document.getElementById("login"),
+  connecting: document.getElementById("connecting"),
+  menu: document.getElementById("menu")
+};
+
+const loaderText = document.getElementById("loader-text");
+const connectStatus = document.getElementById("connect-status");
+const progressBar = document.getElementById("progress-bar");
+
+const phrases = [
+  "Un momento, el ph perfecto toma tiempo",
+  "Contando burbujas y pidiendo a los peces no morder los sensores",
+  "Calibrando las mareas",
+  "Tu mundo acuático casi está listo",
+  "Traduciendo acento de Veracruz",
+  "Espere un momento"
+];
+
+const connectSteps = [
+  "Buscando dispositivo en la red",
+  "Dispositivo encontrado",
+  "Intercambiando credenciales",
+  "Sincronizando sensores",
+  "Conexión establecida"
+];
+
+// ---------- UTIL ----------
+function show(screen) {
+  Object.values(screens).forEach(s => s.classList.remove("active"));
+  screens[screen].classList.add("active");
+}
+
+// ---------- LOADER ----------
+loaderText.textContent = phrases[Math.floor(Math.random() * phrases.length)];
+
+setTimeout(() => {
+  const savedId = localStorage.getItem("aquariumId");
+  if (savedId) {
+    show("menu");
+  } else {
+    show("login");
+  }
+}, 4000);
+
+// ---------- CONEXIÓN ----------
+document.getElementById("connectBtn").addEventListener("click", () => {
+  const id = document.getElementById("aquariumId").value.trim().toUpperCase();
+  const error = document.getElementById("errorMsg");
+
+  error.textContent = "";
+
+  if (!/^[A-Z0-9]{6}$/.test(id)) {
+    error.textContent = "ID inválido";
+    return;
+  }
+
+  show("connecting");
+  simulateConnection(id);
+});
+
+function simulateConnection(id) {
+  let step = 0;
+  let progress = 0;
+
+  progressBar.style.width = "0%";
+
+  const interval = setInterval(() => {
+    connectStatus.textContent = connectSteps[step];
+    progress += 20;
+    progressBar.style.width = progress + "%";
+
+    step++;
+
+    if (step === connectSteps.length) {
+      clearInterval(interval);
+
+      setTimeout(() => {
+        if (id === "4G5HTD") {
+          localStorage.setItem("aquariumId", id);
+          show("menu");
+        } else {
+          show("login");
+          document.getElementById("errorMsg").textContent =
+            "No se encontró el dispositivo";
+        }
+      }, 600);
+    }
+  }, 700);
+}
+
+// ---------- SIMULACIONES ----------
+setInterval(() => {
+  const temp = (25 + Math.random() * 2 - 1).toFixed(1);
+  const ph = (7 + Math.random() * 0.4 - 0.2).toFixed(2);
+
+  const tempEl = document.getElementById("tempValue");
+  const phEl = document.getElementById("phValue");
+
+  if (tempEl && phEl) {
+    tempEl.textContent = temp + " °C";
+    phEl.textContent = ph;
+  }
+}, 3000);
